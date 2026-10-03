@@ -2,6 +2,7 @@ package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.List;
@@ -44,5 +45,17 @@ public class FacultyService {
 
     public List<Faculty> findByColor(String color) {
         return facultyRepository.findByColor(color);
+    }
+
+    public List<Faculty> search(String query) {
+        return facultyRepository.findByColorIgnoreCaseOrNameIgnoreCase(query, query);
+    }
+
+    public List<Student> getStudentsOfFaculty(Long facultyId) {
+        Faculty faculty = facultyRepository.findById(facultyId).orElse(null);
+        if (faculty == null) {
+            return List.of();
+        }
+        return faculty.getStudents() != null ? faculty.getStudents() : List.of();
     }
 }
