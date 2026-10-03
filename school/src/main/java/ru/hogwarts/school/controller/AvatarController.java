@@ -1,5 +1,7 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,5 +36,10 @@ public class AvatarController {
     @GetMapping("/disk/{filePath}")
     public byte[] getFromDisk(@PathVariable String filePath) {
         return avatarService.getAvatarFromDisk(filePath);
+    }
+
+    @GetMapping("/all")
+    public Page<Avatar> getAllAvatars(Pageable pageable) {
+        return avatarService.getAllAvatars(pageable);
     }
 }
