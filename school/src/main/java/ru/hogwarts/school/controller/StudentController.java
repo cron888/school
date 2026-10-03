@@ -1,0 +1,48 @@
+package ru.hogwarts.school.controller;
+
+import org.springframework.web.bind.annotation.*;
+import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.service.StudentService;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/student")
+public class StudentController {
+
+    private final StudentService studentService;
+
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
+    }
+
+    @PostMapping
+    public Student create(@RequestBody Student student) {
+        return studentService.create(student);
+    }
+
+    @GetMapping("/{id}")
+    public Student get(@PathVariable Long id) {
+        return studentService.get(id);
+    }
+
+    @PutMapping
+    public Student update(@RequestBody Student student) {
+        return studentService.update(student);
+    }
+
+    @DeleteMapping("/{id}")
+    public boolean delete(@PathVariable Long id) {
+        return studentService.delete(id);
+    }
+
+    @GetMapping
+    public List<Student> getAll() {
+        return studentService.getAll();
+    }
+
+    @GetMapping("/findByAge")
+    public List<Student> findByAge(@RequestParam int age) {
+        return studentService.findByAge(age);
+    }
+}
