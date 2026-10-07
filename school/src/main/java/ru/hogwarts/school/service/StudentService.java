@@ -87,4 +87,9 @@ public class StudentService {
                 .limit(5)
                 .toList();
     }
+
+    public List<Student> findByNameStartingWithA() {
+        log.info("Вызван метод findByNameStartingWithA");
+        return studentRepository.findByNameStartingWithA();
+    }
 }

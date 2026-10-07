@@ -69,4 +69,9 @@ public class FacultyService {
         }
         return faculty.getStudents() != null ? faculty.getStudents() : List.of();
     }
+
+    public Faculty findLongestName() {
+        log.info("Вызван метод findLongestName");
+        return facultyRepository.findLongestName();
+    }
 }
