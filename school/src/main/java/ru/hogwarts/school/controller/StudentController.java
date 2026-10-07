@@ -72,4 +72,19 @@ public class StudentController {
     public List<Student> getLastFive() {
         return studentService.getLastFive();
     }
+
+    @GetMapping("/findByNameStartingWithA")
+    public List<String> findByNameStartingWithA() {
+        return studentService.findByNameStartingWithA().stream()
+                .map(Student::getName)
+                .map(String::toUpperCase)
+                .sorted()
+                .toList();
+    }
+
+    @GetMapping("/sum")
+    public int sum() {
+        long n = 1_000_000;
+        return (int) (n * (n + 1) / 2);
+    }
 }
