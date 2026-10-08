@@ -7,6 +7,8 @@ import ru.hogwarts.school.service.StudentService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/student")
@@ -86,5 +88,73 @@ public class StudentController {
     public int sum() {
         long n = 1_000_000;
         return (int) (n * (n + 1) / 2);
+    }
+
+    @GetMapping("/print-parallel")
+    public String printParallel() {
+        List<Student> students = studentService.getAll();
+
+        // Основные потоки для первых двух студентов
+        System.out.println(students.get(0).getName());
+        System.out.println(students.get(1).getName());
+
+        // Третий и четвертый студент в параллельном потоке 1
+        ForkJoinPool pool = new ForkJoinPool();
+        CompletableFuture.runAsync(() -> {
+            System.out.println(students.get(2).getName());
+            System.out.println(students.get(3).getName());
+        }, pool);
+
+        // Пятый и шестой студент в параллельном потоке 2
+        CompletableFuture.runAsync(() -> {
+            System.out.println(students.get(4).getName());
+            System.out.println(students.get(5).getName());
+        }, pool);
+
+        // Ждем завершения параллельных задач
+        pool.shutdown();
+        try {
+            pool.awaitTermination(10, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        return "Names printed to console";
+    }
+
+    private synchronized void printStudent(String name) {
+        System.out.println(name);
+    }
+
+    @GetMapping("/print-synchronized")
+    public String printSynchronized() {
+        List<Student> students = studentService.getAll();
+
+        // Основные потоки для первых двух студентов
+        printStudent(students.get(0).getName());
+        printStudent(students.get(1).getName());
+
+        // Третий и четвертый студент в параллельном потоке 1
+        ForkJoinPool pool = new ForkJoinPool();
+        CompletableFuture.runAsync(() -> {
+            printStudent(students.get(2).getName());
+            printStudent(students.get(3).getName());
+        }, pool);
+
+        // Пятый и шестой студент в параллельном потоке 2
+        CompletableFuture.runAsync(() -> {
+            printStudent(students.get(4).getName());
+            printStudent(students.get(5).getName());
+        }, pool);
+
+        // Ждем завершения параллельных задач
+        pool.shutdown();
+        try {
+            pool.awaitTermination(10, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        return "Names printed to console";
     }
 }
